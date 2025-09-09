@@ -1,21 +1,37 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:utracker/providers/auth_provider.dart';
 import 'package:utracker/screens/home_screen.dart';
 
-class SignUp extends StatefulWidget {
+class SignUp extends ConsumerStatefulWidget {
   const SignUp({super.key});
 
   @override
-  State<SignUp> createState() => _SignUpState();
+  ConsumerState<SignUp> createState() => _SignUpState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _SignUpState extends ConsumerState<SignUp> {
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
 
   void _saveUser() {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+    final userBox = Hive.box('userBox');
+    final settingsBox = Hive.box('settingsBox');
+
+    userBox.put('name', _nameController.text.trim());
+    userBox.put('age', _ageController.text.trim());
+
+    settingsBox.put('isLoggedIn', true);
+
+    ref.read(authProvider.notifier).login();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => HomeScreen()),
+    );
   }
 
   @override

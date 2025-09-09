@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:utracker/providers/auth_provider.dart';
 import 'package:utracker/screens/home_screen.dart';
 import 'package:utracker/screens/onboarding_screen.dart';
 
-class AuthGate extends StatefulWidget {
+class AuthGate extends ConsumerWidget{
   const AuthGate({super.key});
 
   @override
-  State<AuthGate> createState() => _AuthGateState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoggedIn = ref.watch(authProvider);
 
-class _AuthGateState extends State<AuthGate> {
-  bool isLoggedIn = false;
-  @override
-  Widget build(BuildContext context) {
-    return isLoggedIn ? HomeScreen() : OnboardingScreen();
+    return isLoggedIn? HomeScreen(): OnboardingScreen();
   }
 }

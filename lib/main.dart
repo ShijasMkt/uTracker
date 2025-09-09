@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:utracker/auth_gate.dart';
-import 'package:utracker/models/user_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  Hive.registerAdapter(UserModelAdapter());
-  runApp(const MyApp());
+  await Hive.openBox('userBox');
+  await Hive.openBox('settingsBox');
+  runApp(const ProviderScope(child: MyApp()) );
 }
 
 class MyApp extends StatelessWidget {
