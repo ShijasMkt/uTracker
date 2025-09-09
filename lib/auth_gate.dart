@@ -13,6 +13,6 @@ class _AuthGateState extends State<AuthGate> {
   bool isLoggedIn = false;
   @override
   Widget build(BuildContext context) {
-    return isLoggedIn? HomeScreen():OnboardingScreen();
+    return isLoggedIn ? HomeScreen() : OnboardingScreen();
   }
 }
