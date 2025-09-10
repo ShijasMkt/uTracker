@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -129,9 +128,7 @@ class _SignUpState extends ConsumerState<SignUp> {
                   onPressed: () {
                     if (_formkey.currentState!.validate()) {
                       _saveUser();
-                    } else {
-                      log("error");
-                    }
+                    } 
                   },
                   child: Text(
                     "Register",
