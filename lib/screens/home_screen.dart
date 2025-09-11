@@ -1,9 +1,11 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:utracker/models/habit_status_model.dart';
+import 'package:utracker/models/user_model.dart';
 import 'package:utracker/screens/add_habit.dart';
 import 'package:utracker/screens/onboarding_screen.dart';
+import 'package:utracker/screens/settings.dart';
 import 'package:utracker/widgets/habit_tile.dart';
 import 'package:utracker/models/habit_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -17,21 +19,29 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  final userBox = Hive.box('userBox');
-  final settingsBox = Hive.box('settingsBox');
+  late Box settingsBox;
+  late Box userBox;
+  late Box<Habit> habitBox;
+  late Box<HabitStatus> habitStatusBox;
+
   int selectedIndex = -1;
   DateTime? selectedDate;
-  final habitBox = Hive.box<Habit>('Habits');
 
   @override
   void initState() {
     super.initState();
+    settingsBox = Hive.box('settingsBox');
+    userBox = Hive.box<User>('Users');
+    habitBox = Hive.box<Habit>('Habits');
+    habitStatusBox = Hive.box<HabitStatus>('HabitStatus');
     DateTime today = DateTime.now();
     selectedDate = DateTime(today.year, today.month, today.day);
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = settingsBox.get('currentUser');
+    final user = userBox.get(currentUser);
     DateTime today = DateTime.now();
     today = DateTime(today.year, today.month, today.day);
     return Scaffold(
@@ -63,7 +73,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             DrawerHeader(
               decoration: BoxDecoration(color: Color(0xff0A5938)),
               child: Text(
-                "Hi, ${userBox.get('name')}",
+                "Hi, ${user.uName}",
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ),
@@ -78,7 +88,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               leading: Icon(Icons.settings),
               title: Text("Settings"),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (_)=>Settings()));
               },
             ),
             ListTile(
@@ -133,8 +143,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 setState(() {
                                   selectedDate = day;
                                 });
-                                log("$day");
-                                log("$today");
                               },
                               child: Column(
                                 children: [
@@ -171,24 +179,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: ValueListenableBuilder(
                   valueListenable: habitBox.listenable(),
                   builder: (context, Box<Habit> box, _) {
-                    if (box.values.isEmpty) {
+                    final currentUser = settingsBox.get('currentUser');
+
+                    final userHabits = box.values
+                        .where((habit) => habit.userId == currentUser)
+                        .toList();
+                    if (userHabits.isEmpty) {
                       return Center(child: Text("No habits added"));
                     }
+
                     return ListView.builder(
-                      itemCount: box.length,
+                      itemCount: userHabits.length,
                       itemBuilder: (context, index) {
-                        final habit = box.getAt(index);
-                        if (habit == null) {
-                          return SizedBox();
-                        }
+                        final habit = userHabits[index];
+                        String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate!);
+                        final statusKey= '${habit.key}-$formattedDate';
+                        final status=habitStatusBox.get(statusKey);
+                        final isCompleted= status?.isCompleted?? false;
                         return HabitTile(
-                          index: index,
-                          context:context,
-                          onTap: () {
-                            setState(() {
-                              selectedIndex = index;
-                            });
-                          },
+                          date:selectedDate,
+                          context: context,
+                          isCompleted:isCompleted,
                           habit: habit,
                         );
                       },

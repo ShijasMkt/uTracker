@@ -3,14 +3,19 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:utracker/auth_gate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:utracker/models/habit_model.dart';
+import 'package:utracker/models/habit_status_model.dart';
+import 'package:utracker/models/user_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  await Hive.openBox('userBox');
-  await Hive.openBox('settingsBox');
+  Hive.registerAdapter(UserAdapter());
   Hive.registerAdapter(HabitAdapter());
+  Hive.registerAdapter(HabitStatusAdapter());
+  await Hive.openBox('settingsBox');
+  await Hive.openBox<User>('Users');
   await Hive.openBox<Habit>('Habits');
+  await Hive.openBox<HabitStatus>('HabitStatus');
   runApp(const ProviderScope(child: MyApp()) );
 }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:utracker/screens/sign_up.dart';
+import 'package:utracker/screens/login.dart';
 
 class OnboardingScreen extends ConsumerWidget {
   const OnboardingScreen({super.key});
@@ -29,27 +29,13 @@ class OnboardingScreen extends ConsumerWidget {
                 borderRadius: BorderRadiusGeometry.circular(50),
                 child: Image.asset('assets/images/logo.png'),
               ),
-              Spacer(),
-              ElevatedButton.icon(
-                style: ButtonStyle(
-                  minimumSize: WidgetStatePropertyAll(
-                    Size(double.infinity, 40),
-                  ),
-                  backgroundColor: WidgetStatePropertyAll(Color(0xff0A5938)),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => SignUp()),
-                  );
-                },
-                label: Text(
-                  "Get Started",
-                  style: TextStyle(color: Colors.white),
-                ),
-                icon: Icon(Icons.arrow_right_alt, color: Colors.white),
-                iconAlignment: IconAlignment.end,
-              ),
+                Spacer(),
+                ElevatedButton(
+                  style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Color(0xff0A5938)),minimumSize: WidgetStatePropertyAll(Size(double.infinity,40)) ),
+                  onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=>Login()));
+                }, child: Text("Get Started",style: TextStyle(fontSize: 16, color: Colors.white),)),
+              
             ],
           ),
         ),

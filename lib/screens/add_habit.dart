@@ -16,8 +16,12 @@ class _AddHabitState extends State<AddHabit> {
 
   void _saveHabit() {
     final habitBox = Hive.box<Habit>('Habits');
+    final settingsBox = Hive.box('settingsBox');
+
+    final currentUser= settingsBox.get('currentUser');
 
     final newHabit = Habit(
+      userId: currentUser,
       title: _titleController.text.trim(),
       desc: _descController.text.trim(),
     );
@@ -28,7 +32,7 @@ class _AddHabitState extends State<AddHabit> {
     ).showSnackBar(SnackBar(backgroundColor: Colors.green, duration: Duration(seconds: 2), content: Text('Habbit Added')));
     Navigator.pop(context);
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
