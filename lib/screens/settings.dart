@@ -12,7 +12,7 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   late Box settingsBox;
   late Box userBox;
-  bool isEditing=false;
+  bool isEditing = false;
 
   @override
   void initState() {
@@ -39,16 +39,16 @@ class _SettingsState extends State<Settings> {
               ),
               SizedBox(height: 20),
               TextField(
-                readOnly: isEditing? false : true,
+                readOnly: isEditing ? false : true,
                 decoration: InputDecoration(
                   label: Text("Username"),
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   hint: Text(user.uName),
                   suffixIcon: IconButton(
-                    icon: Icon( isEditing?Icons.check : Icons.edit),
+                    icon: Icon(isEditing ? Icons.check : Icons.edit),
                     onPressed: () {
                       setState(() {
-                        isEditing=!isEditing;
+                        isEditing = !isEditing;
                       });
                     },
                   ),

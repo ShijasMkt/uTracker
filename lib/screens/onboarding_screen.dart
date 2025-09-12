@@ -6,7 +6,7 @@ class OnboardingScreen extends ConsumerWidget {
   const OnboardingScreen({super.key});
 
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -29,13 +29,25 @@ class OnboardingScreen extends ConsumerWidget {
                 borderRadius: BorderRadiusGeometry.circular(50),
                 child: Image.asset('assets/images/logo.png'),
               ),
-                Spacer(),
-                ElevatedButton(
-                  style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Color(0xff0A5938)),minimumSize: WidgetStatePropertyAll(Size(double.infinity,40)) ),
-                  onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_)=>Login()));
-                }, child: Text("Get Started",style: TextStyle(fontSize: 16, color: Colors.white),)),
-              
+              Spacer(),
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(Color(0xff0A5938)),
+                  minimumSize: WidgetStatePropertyAll(
+                    Size(double.infinity, 40),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => Login()),
+                  );
+                },
+                child: Text(
+                  "Get Started",
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
             ],
           ),
         ),
@@ -43,5 +55,3 @@ class OnboardingScreen extends ConsumerWidget {
     );
   }
 }
-
-

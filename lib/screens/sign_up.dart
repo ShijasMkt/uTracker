@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:utracker/models/user_model.dart';
-import 'package:utracker/screens/login.dart';
+import 'package:utracker/providers/auth_provider.dart';
+import 'package:utracker/screens/home_screen.dart';
 
 class SignUp extends ConsumerStatefulWidget {
   const SignUp({super.key});
@@ -18,6 +19,7 @@ class _SignUpState extends ConsumerState<SignUp> {
 
   void _saveUser() {
     final userBox = Hive.box<User>('Users');
+    final settingsBox = Hive.box('settingsBox');
 
     final userName = _nameController.text.trim();
     final password = _passwordController.text.trim();
@@ -37,15 +39,16 @@ class _SignUpState extends ConsumerState<SignUp> {
     final user = User(uName: userName, password: password);
     userBox.add(user);
 
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(backgroundColor: Colors.green, content: Text("User created")),
+    );
 
-     ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(backgroundColor: Colors.green, content: Text("User created")));
-    
-
+    settingsBox.put('isLoggedIn', true);
+    settingsBox.put('currentUser', user.key);
+    ref.read(authProvider.notifier).login();
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => Login()),
+      MaterialPageRoute(builder: (_) => HomeScreen()),
     );
   }
 

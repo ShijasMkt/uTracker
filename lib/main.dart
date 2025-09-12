@@ -16,7 +16,7 @@ void main() async {
   await Hive.openBox<User>('Users');
   await Hive.openBox<Habit>('Habits');
   await Hive.openBox<HabitStatus>('HabitStatus');
-  runApp(const ProviderScope(child: MyApp()) );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'uTracker',
       theme: ThemeData(
         fontFamily: 'Poppins',

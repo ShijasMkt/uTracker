@@ -6,6 +6,7 @@ import 'package:utracker/models/user_model.dart';
 import 'package:utracker/screens/add_habit.dart';
 import 'package:utracker/screens/onboarding_screen.dart';
 import 'package:utracker/screens/settings.dart';
+import 'package:utracker/functions/streak_calculator.dart';
 import 'package:utracker/widgets/habit_tile.dart';
 import 'package:utracker/models/habit_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -23,7 +24,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late Box userBox;
   late Box<Habit> habitBox;
   late Box<HabitStatus> habitStatusBox;
-
   int selectedIndex = -1;
   DateTime? selectedDate;
 
@@ -45,67 +45,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     DateTime today = DateTime.now();
     today = DateTime(today.year, today.month, today.day);
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => AddHabit()),
-              );
-            },
-            icon: Icon(Icons.add),
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Color(0xff0A5938)),
-              child: Text(
-                "Hi, ${user.uName}",
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text("Home"),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Settings"),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_)=>Settings()));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.logout, color: Colors.red),
-              title: Text("Logout"),
-              onTap: () {
-                settingsBox.put('isLoggedIn', false);
-                ref.read(authProvider.notifier).logout();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => OnboardingScreen()),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+      appBar: _myAppBar(context),
+      drawer: _myDrawer(user, context),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -177,30 +118,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               SizedBox(height: 20),
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: habitBox.listenable(),
-                  builder: (context, Box<Habit> box, _) {
-                    final currentUser = settingsBox.get('currentUser');
+                  valueListenable: habitStatusBox.listenable(),
+                  builder: (context, Box<HabitStatus> statusBox, _) {
+                    return ValueListenableBuilder(
+                      valueListenable: habitBox.listenable(),
+                      builder: (context, Box<Habit> box, _) {
+                        final currentUser = settingsBox.get('currentUser');
 
-                    final userHabits = box.values
-                        .where((habit) => habit.userId == currentUser)
-                        .toList();
-                    if (userHabits.isEmpty) {
-                      return Center(child: Text("No habits added"));
-                    }
+                        final userHabits = box.values
+                            .where((habit) => habit.userId == currentUser)
+                            .toList();
+                        if (userHabits.isEmpty) {
+                          return Center(child: Text("No habits added"));
+                        }
 
-                    return ListView.builder(
-                      itemCount: userHabits.length,
-                      itemBuilder: (context, index) {
-                        final habit = userHabits[index];
-                        String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate!);
-                        final statusKey= '${habit.key}-$formattedDate';
-                        final status=habitStatusBox.get(statusKey);
-                        final isCompleted= status?.isCompleted?? false;
-                        return HabitTile(
-                          date:selectedDate,
-                          context: context,
-                          isCompleted:isCompleted,
-                          habit: habit,
+                        return ListView.builder(
+                          itemCount: userHabits.length,
+                          itemBuilder: (context, index) {
+                            final habit = userHabits[index];
+                            String formattedDate = DateFormat(
+                              'yyyy-MM-dd',
+                            ).format(selectedDate!);
+                            final statusKey = '${habit.key}-$formattedDate';
+                            final status = habitStatusBox.get(statusKey);
+                            final isCompleted = status?.isCompleted ?? false;
+                            int streak = calculateStreak(habit, statusBox);
+                            return HabitTile(
+                              date: selectedDate,
+                              context: context,
+                              isCompleted: isCompleted,
+                              habit: habit,
+                              streak: streak,
+                            );
+                          },
                         );
                       },
                     );
@@ -210,6 +160,78 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  //AppBar
+  AppBar _myAppBar(BuildContext context) {
+    return AppBar(
+      leading: Builder(
+        builder: (context) => IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+          },
+        ),
+      ),
+      actions: [
+        IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => AddHabit()),
+            );
+          },
+          icon: Icon(Icons.add),
+        ),
+      ],
+    );
+  }
+
+  //Drawer of app
+  Drawer _myDrawer(user, BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(color: Color(0xff0A5938)),
+            child: Text(
+              "Hi, ${user.uName}",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          ),
+          ListTile(
+            leading: Icon(Icons.home),
+            title: Text("Home"),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.settings),
+            title: Text("Settings"),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => Settings()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.logout, color: Colors.red),
+            title: Text("Logout"),
+            onTap: () {
+              settingsBox.put('isLoggedIn', false);
+              ref.read(authProvider.notifier).logout();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => OnboardingScreen()),
+              );
+            },
+          ),
+        ],
       ),
     );
   }

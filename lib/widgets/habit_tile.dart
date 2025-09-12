@@ -4,13 +4,12 @@ import 'package:utracker/models/habit_model.dart';
 import 'package:intl/intl.dart';
 import 'package:utracker/models/habit_status_model.dart';
 
-
 class HabitTile extends StatefulWidget {
   final DateTime? date;
   final BuildContext context;
   final bool isCompleted;
   final Habit habit;
-
+  final int streak;
 
   const HabitTile({
     super.key,
@@ -18,6 +17,7 @@ class HabitTile extends StatefulWidget {
     required this.context,
     required this.isCompleted,
     required this.habit,
+    required this.streak,
   });
 
   @override
@@ -36,20 +36,23 @@ class _HabitTileState extends State<HabitTile> {
   }
 
   void toggleStatus(Habit habit) {
-
     String formattedDate = DateFormat('yyyy-MM-dd').format(widget.date!);
     final statusKey = '${habit.key}-$formattedDate';
 
-    HabitStatus? status= habitStatusBox.get(statusKey);
+    HabitStatus? status = habitStatusBox.get(statusKey);
 
-    if(status!=null){
-      status.isCompleted =!status.isCompleted;
+    if (status != null) {
+      status.isCompleted = !status.isCompleted;
       status.save();
-    }else{
-      final newStatus=HabitStatus(habitId: habit.key.toString(), date: formattedDate,isCompleted: true);
+    } else {
+      final newStatus = HabitStatus(
+        habitId: habit.key.toString(),
+        date: formattedDate,
+        isCompleted: true,
+      );
       habitStatusBox.put(statusKey, newStatus);
-    }   
-
+    }
+    setState(() {});
   }
 
   void _showHabitInfo() {
@@ -59,10 +62,17 @@ class _HabitTileState extends State<HabitTile> {
         return AlertDialog(
           actionsAlignment: MainAxisAlignment.spaceBetween,
           title: Text(widget.habit.title),
-          content: Text(
-            widget.habit.desc.isNotEmpty
-                ? widget.habit.desc
-                : "No Description given",
+          content: Wrap(
+            direction: Axis.vertical,
+            children: [
+              Text(
+                widget.habit.desc.isNotEmpty
+                    ? widget.habit.desc
+                    : "No Description given",
+              ),
+              SizedBox(height: 10),
+              Text("Streak: ${widget.streak} days"),
+            ],
           ),
           actions: [
             IconButton(
@@ -88,32 +98,48 @@ class _HabitTileState extends State<HabitTile> {
       margin: EdgeInsets.symmetric(vertical: 5),
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: widget.isCompleted? Colors.orangeAccent: Color(0xffd5d5d5),
+        color: widget.isCompleted ? Colors.orangeAccent : Color(0xffd5d5d5),
         borderRadius: BorderRadius.circular(3),
       ),
       child: InkWell(
-        onTap: (){
+        onTap: () {
           toggleStatus(widget.habit);
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(widget.habit.title, style: TextStyle(color: Colors.black)),
-            Row(children: [
-              InkWell(
-              onTap: () {
-                _showHabitInfo();
-              },
-              child: Icon(Icons.info),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(widget.habit.title, style: TextStyle(color: Colors.black)),
+                SizedBox(height: 5),
+                Row(
+                  children: [
+                    Icon(Icons.local_fire_department, size: 18),
+                    Text(
+                      "${widget.streak.toString()} days",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ],
+                )
+              ],
             ),
-            Checkbox(
-              value: widget.isCompleted,
-              onChanged: (_) {
-                toggleStatus(widget.habit);
-              },
+            Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                    _showHabitInfo();
+                  },
+                  child: Icon(Icons.info),
+                ),
+                Checkbox(
+                  value: widget.isCompleted,
+                  onChanged: (_) {
+                    toggleStatus(widget.habit);
+                  },
+                ),
+              ],
             ),
-            ],)
-            
           ],
         ),
       ),

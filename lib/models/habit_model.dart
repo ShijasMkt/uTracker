@@ -3,7 +3,6 @@ part 'habit_model.g.dart';
 
 @HiveType(typeId: 1)
 class Habit extends HiveObject {
-  
   @HiveField(0)
   int userId;
 
@@ -21,5 +20,5 @@ class Habit extends HiveObject {
     required this.title,
     this.desc = '',
     Map<String, bool>? dailyStatus,
-  }): dailyStatus = dailyStatus ?? {};
+  }) : dailyStatus = dailyStatus ?? {};
 }

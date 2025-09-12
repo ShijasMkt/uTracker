@@ -31,16 +31,19 @@ class _LoginState extends ConsumerState<Login> {
         .toList();
 
     if (matchedUser.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text("Invalid username or password")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Invalid username or password"),
+        ),
+      );
       return;
     } else {
       final user = matchedUser.first;
       settingsBox.put('isLoggedIn', true);
       settingsBox.put('currentUser', user.key);
       ref.read(authProvider.notifier).login();
-      Navigator.push(context, MaterialPageRoute(builder: (_)=>HomeScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen()));
     }
   }
 
@@ -125,13 +128,24 @@ class _LoginState extends ConsumerState<Login> {
                     return null;
                   },
                 ),
-                SizedBox(height: 10,),
-                Row(children: [
-                  Text("New User?",style: TextStyle(fontSize: 14),),
-                  InkWell(onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_)=>SignUp()));
-                  }, child: Text(" Register here",style: TextStyle(fontSize: 14,color: Colors.purple),),),
-                ],),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Text("New User?", style: TextStyle(fontSize: 14)),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => SignUp()),
+                        );
+                      },
+                      child: Text(
+                        " Register here",
+                        style: TextStyle(fontSize: 14, color: Colors.purple),
+                      ),
+                    ),
+                  ],
+                ),
                 Spacer(),
                 ElevatedButton(
                   style: ButtonStyle(
@@ -145,10 +159,11 @@ class _LoginState extends ConsumerState<Login> {
                       _checkLogin();
                     }
                   },
-                  child: Text("Login", style: TextStyle(color: Colors.white,fontSize: 16)),
+                  child: Text(
+                    "Login",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
                 ),
-                
-
               ],
             ),
           ),

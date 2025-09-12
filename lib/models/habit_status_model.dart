@@ -2,7 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 part 'habit_status_model.g.dart';
 
 @HiveType(typeId: 2)
-class HabitStatus extends HiveObject{
+class HabitStatus extends HiveObject {
   @HiveField(0)
   String habitId;
 
@@ -15,6 +15,6 @@ class HabitStatus extends HiveObject{
   HabitStatus({
     required this.habitId,
     required this.date,
-    this.isCompleted=false,
+    this.isCompleted = false,
   });
 }
