@@ -1,7 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:utracker/models/habit_model.dart';
-import 'package:utracker/models/habit_status_model.dart';
+import 'package:utracker/features/habit_tracker/data/models/habit_model.dart';
+import 'package:utracker/features/habit_tracker/data/models/habit_status_model.dart';
 
 int calculateStreak(Habit habit, Box<HabitStatus> statusBox) {
   int streak = 0;

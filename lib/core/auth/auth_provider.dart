@@ -22,6 +22,7 @@ class AuthNotifier extends StateNotifier<bool> {
     settingsBox.put('isLoggedIn', false);
     state = false;
   }
+  
 }
 
 final authProvider = StateNotifierProvider<AuthNotifier, bool>((ref) {

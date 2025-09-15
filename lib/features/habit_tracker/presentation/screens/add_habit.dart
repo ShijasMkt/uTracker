@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:utracker/models/habit_model.dart';
+import 'package:utracker/features/habit_tracker/data/models/habit_model.dart';
 
 class AddHabit extends StatefulWidget {
   const AddHabit({super.key});

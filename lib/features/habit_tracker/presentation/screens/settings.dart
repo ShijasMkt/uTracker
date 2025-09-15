@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:utracker/models/user_model.dart';
-import 'package:utracker/providers/auth_provider.dart';
-import 'package:utracker/screens/onboarding_screen.dart';
+import 'package:utracker/features/habit_tracker/data/models/user_model.dart';
+import 'package:utracker/core/auth/auth_provider.dart';
+import 'package:utracker/features/habit_tracker/presentation/screens/onboarding_screen.dart';
 
 class Settings extends ConsumerStatefulWidget {
   const Settings({super.key});

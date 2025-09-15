@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:utracker/models/habit_model.dart';
+import 'package:utracker/features/habit_tracker/data/models/habit_model.dart';
 import 'package:intl/intl.dart';
-import 'package:utracker/models/habit_status_model.dart';
+import 'package:utracker/features/habit_tracker/data/models/habit_status_model.dart';
 
 class HabitTile extends StatefulWidget {
   final DateTime? date;

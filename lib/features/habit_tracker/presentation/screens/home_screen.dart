@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:utracker/models/habit_status_model.dart';
-import 'package:utracker/models/user_model.dart';
-import 'package:utracker/screens/add_habit.dart';
-import 'package:utracker/screens/onboarding_screen.dart';
-import 'package:utracker/screens/settings.dart';
-import 'package:utracker/functions/streak_calculator.dart';
-import 'package:utracker/widgets/habit_tile.dart';
-import 'package:utracker/models/habit_model.dart';
+import 'package:utracker/features/habit_tracker/data/models/habit_status_model.dart';
+import 'package:utracker/features/habit_tracker/data/models/user_model.dart';
+import 'package:utracker/features/habit_tracker/presentation/screens/add_habit.dart';
+import 'package:utracker/features/habit_tracker/presentation/screens/onboarding_screen.dart';
+import 'package:utracker/features/habit_tracker/presentation/screens/settings.dart';
+import 'package:utracker/features/habit_tracker/domain/usecases/streak_calculator.dart';
+import 'package:utracker/features/habit_tracker/presentation/widgets/habit_tile.dart';
+import 'package:utracker/features/habit_tracker/data/models/habit_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:utracker/providers/auth_provider.dart';
+import 'package:utracker/core/auth/auth_provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -183,7 +183,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   //Drawer of app
-  Drawer _myDrawer(user, BuildContext context) {
+  Drawer _myDrawer(User user, BuildContext context) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,

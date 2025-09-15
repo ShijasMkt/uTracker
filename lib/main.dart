@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:utracker/auth_gate.dart';
+import 'package:utracker/core/auth/auth_gate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:utracker/models/habit_model.dart';
-import 'package:utracker/models/habit_status_model.dart';
-import 'package:utracker/models/user_model.dart';
+import 'package:utracker/features/habit_tracker/data/models/habit_model.dart';
+import 'package:utracker/features/habit_tracker/data/models/habit_status_model.dart';
+import 'package:utracker/features/habit_tracker/data/models/user_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

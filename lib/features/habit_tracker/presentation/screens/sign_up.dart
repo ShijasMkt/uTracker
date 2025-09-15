@@ -1,50 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:utracker/models/user_model.dart';
-import 'package:utracker/providers/auth_provider.dart';
-import 'package:utracker/screens/home_screen.dart';
-import 'package:utracker/screens/sign_up.dart';
+import 'package:utracker/features/habit_tracker/data/models/user_model.dart';
+import 'package:utracker/core/auth/auth_provider.dart';
+import 'package:utracker/features/habit_tracker/presentation/screens/home_screen.dart';
 
-class Login extends ConsumerStatefulWidget {
-  const Login({super.key});
+class SignUp extends ConsumerStatefulWidget {
+  const SignUp({super.key});
 
   @override
-  ConsumerState<Login> createState() => _LoginState();
+  ConsumerState<SignUp> createState() => _SignUpState();
 }
 
-class _LoginState extends ConsumerState<Login> {
+class _SignUpState extends ConsumerState<SignUp> {
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _checkLogin() {
+  void _saveUser() {
     final userBox = Hive.box<User>('Users');
     final settingsBox = Hive.box('settingsBox');
 
     final userName = _nameController.text.trim();
     final password = _passwordController.text.trim();
 
-    final matchedUser = userBox.values
+    final existingUser = userBox.values
         .cast<User>()
-        .where((user) => user.uName == userName && user.password == password)
+        .where((user) => user.uName == userName)
         .toList();
 
-    if (matchedUser.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          content: Text("Invalid username or password"),
-        ),
-      );
+    if (existingUser.isNotEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Username already exists!")));
       return;
-    } else {
-      final user = matchedUser.first;
-      settingsBox.put('isLoggedIn', true);
-      settingsBox.put('currentUser', user.key);
-      ref.read(authProvider.notifier).login();
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => HomeScreen()),(route)=>false);
     }
+
+    final user = User(uName: userName, password: password);
+    userBox.add(user);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(backgroundColor: Colors.green, content: Text("User created")),
+    );
+
+    settingsBox.put('isLoggedIn', true);
+    settingsBox.put('currentUser', user.key);
+    ref.read(authProvider.notifier).login();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => HomeScreen()),
+      (route) => false,
+    );
   }
 
   @override
@@ -62,12 +68,12 @@ class _LoginState extends ConsumerState<Login> {
                 Column(
                   children: [
                     Text(
-                      "Welcome Back!",
+                      "Let's Personalize Your Journeys",
                       style: TextTheme.of(context).titleLarge,
                       textAlign: TextAlign.center,
                     ),
                     Text(
-                      "Log in to continue your journey",
+                      "Tell us a bit about yourself",
                       style: TextTheme.of(context).titleSmall,
                       textAlign: TextAlign.center,
                     ),
@@ -79,7 +85,7 @@ class _LoginState extends ConsumerState<Login> {
                   controller: _nameController,
                   keyboardType: TextInputType.name,
                   decoration: InputDecoration(
-                    hintText: "Enter your username",
+                    hintText: "Enter a username",
                     filled: true,
                     fillColor: Color(0xffd5d5d5),
                     border: OutlineInputBorder(
@@ -96,17 +102,17 @@ class _LoginState extends ConsumerState<Login> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Please enter a valid username";
+                      return "Please enter a valid name";
                     }
                     return null;
                   },
                 ),
                 SizedBox(height: 10),
                 TextFormField(
-                  controller: _passwordController,
                   obscureText: true,
+                  controller: _passwordController,
                   decoration: InputDecoration(
-                    hintText: "Enter your password",
+                    hintText: "Enter a password",
                     filled: true,
                     fillColor: Color(0xffd5d5d5),
                     border: OutlineInputBorder(
@@ -123,28 +129,10 @@ class _LoginState extends ConsumerState<Login> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Please enter your password";
+                      return "Please enter a password";
                     }
                     return null;
                   },
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    Text("New User?", style: TextStyle(fontSize: 14)),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => SignUp()),
-                        );
-                      },
-                      child: Text(
-                        " Register here",
-                        style: TextStyle(fontSize: 14, color: Colors.purple),
-                      ),
-                    ),
-                  ],
                 ),
                 Spacer(),
                 ElevatedButton(
@@ -156,12 +144,12 @@ class _LoginState extends ConsumerState<Login> {
                   ),
                   onPressed: () {
                     if (_formkey.currentState!.validate()) {
-                      _checkLogin();
+                      _saveUser();
                     }
                   },
                   child: Text(
-                    "Login",
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    "Register",
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ],
