@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:utracker/core/constrants/app_colors.dart';
 import 'package:utracker/features/habit_tracker/data/models/habit_status_model.dart';
 import 'package:utracker/features/habit_tracker/data/models/user_model.dart';
+import 'package:utracker/features/habit_tracker/presentation/functions/date_only_format.dart';
 import 'package:utracker/features/habit_tracker/presentation/screens/add_habit.dart';
 import 'package:utracker/features/habit_tracker/presentation/screens/onboarding_screen.dart';
 import 'package:utracker/features/habit_tracker/presentation/screens/settings.dart';
-import 'package:utracker/features/habit_tracker/domain/usecases/streak_calculator.dart';
+import 'package:utracker/features/habit_tracker/presentation/functions/streak_calculator.dart';
 import 'package:utracker/features/habit_tracker/presentation/widgets/habit_tile.dart';
 import 'package:utracker/features/habit_tracker/data/models/habit_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -76,8 +78,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               color: day == selectedDate
-                                  ? Color(0xff0A5938)
-                                  : Color(0xffd5d5d5),
+                                  ? AppColors.mainGreenColor
+                                  : AppColors.mainGreyColor,
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: InkWell(
@@ -137,9 +139,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           itemCount: userHabits.length,
                           itemBuilder: (context, index) {
                             final habit = userHabits[index];
-                            String formattedDate = DateFormat(
-                              'yyyy-MM-dd',
-                            ).format(selectedDate!);
+                            String formattedDate = dateOnlyFormatter(
+                              selectedDate!,
+                            );
                             final statusKey = '${habit.key}-$formattedDate';
                             final status = habitStatusBox.get(statusKey);
                             final isCompleted = status?.isCompleted ?? false;
@@ -189,7 +191,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(color: Color(0xff0A5938)),
+            decoration: BoxDecoration(color: AppColors.mainGreenColor),
             child: Text(
               "Hi, ${user.uName}",
               style: TextStyle(color: Colors.white, fontSize: 20),
@@ -233,10 +235,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   FloatingActionButton _myFloatingActionButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_)=>AddHabit())
-        );
+        Navigator.push(context, MaterialPageRoute(builder: (_) => AddHabit()));
       },
       child: Icon(Icons.add),
     );

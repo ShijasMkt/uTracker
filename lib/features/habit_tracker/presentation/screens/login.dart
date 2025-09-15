@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:utracker/core/constrants/app_colors.dart';
 import 'package:utracker/features/habit_tracker/data/models/user_model.dart';
 import 'package:utracker/core/auth/auth_provider.dart';
 import 'package:utracker/features/habit_tracker/presentation/screens/home_screen.dart';
 import 'package:utracker/features/habit_tracker/presentation/screens/sign_up.dart';
+import 'package:utracker/features/habit_tracker/presentation/widgets/custom_border_style.dart';
 
 class Login extends ConsumerStatefulWidget {
   const Login({super.key});
@@ -43,7 +45,11 @@ class _LoginState extends ConsumerState<Login> {
       settingsBox.put('isLoggedIn', true);
       settingsBox.put('currentUser', user.key);
       ref.read(authProvider.notifier).login();
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => HomeScreen()),(route)=>false);
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => HomeScreen()),
+        (route) => false,
+      );
     }
   }
 
@@ -81,18 +87,12 @@ class _LoginState extends ConsumerState<Login> {
                   decoration: InputDecoration(
                     hintText: "Enter your username",
                     filled: true,
-                    fillColor: Color(0xffd5d5d5),
+                    fillColor: AppColors.mainGreyColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(color: Color(0xffd5d5d5)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(color: Color(0xffd5d5d5)),
-                    ),
+                    enabledBorder: customBorderStyle(),
+                    focusedBorder: customBorderStyle(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -108,18 +108,12 @@ class _LoginState extends ConsumerState<Login> {
                   decoration: InputDecoration(
                     hintText: "Enter your password",
                     filled: true,
-                    fillColor: Color(0xffd5d5d5),
+                    fillColor: AppColors.mainGreyColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(color: Color(0xffd5d5d5)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(color: Color(0xffd5d5d5)),
-                    ),
+                    enabledBorder: customBorderStyle(),
+                    focusedBorder: customBorderStyle(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -152,7 +146,9 @@ class _LoginState extends ConsumerState<Login> {
                     minimumSize: WidgetStatePropertyAll(
                       Size(double.infinity, 40),
                     ),
-                    backgroundColor: WidgetStatePropertyAll(Color(0xff0A5938)),
+                    backgroundColor: WidgetStatePropertyAll(
+                      AppColors.mainGreenColor,
+                    ),
                   ),
                   onPressed: () {
                     if (_formkey.currentState!.validate()) {
@@ -171,4 +167,6 @@ class _LoginState extends ConsumerState<Login> {
       ),
     );
   }
+
+  
 }

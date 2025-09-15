@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:utracker/core/constrants/app_colors.dart';
 import 'package:utracker/features/habit_tracker/data/models/habit_model.dart';
 
 class AddHabit extends StatefulWidget {
@@ -76,7 +77,7 @@ class _AddHabitState extends State<AddHabit> {
                     }
                   },
                   style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(Color(0xff0A5938)),
+                    backgroundColor: WidgetStatePropertyAll(AppColors.mainGreenColor),
                   ),
                   child: Text("Save", style: TextStyle(color: Colors.white)),
                 ),

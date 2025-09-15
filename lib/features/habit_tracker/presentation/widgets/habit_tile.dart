@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:utracker/core/constrants/app_colors.dart';
 import 'package:utracker/features/habit_tracker/data/models/habit_model.dart';
-import 'package:intl/intl.dart';
 import 'package:utracker/features/habit_tracker/data/models/habit_status_model.dart';
+import 'package:utracker/features/habit_tracker/presentation/functions/date_only_format.dart';
 
 class HabitTile extends StatefulWidget {
   final DateTime? date;
@@ -38,7 +39,7 @@ class _HabitTileState extends State<HabitTile> {
   }
 
   void toggleStatus(Habit habit) {
-    String formattedDate = DateFormat('yyyy-MM-dd').format(widget.date!);
+    String formattedDate = dateOnlyFormatter(widget.date!);
     final statusKey = '${habit.key}-$formattedDate';
 
     HabitStatus? status = habitStatusBox.get(statusKey);
@@ -100,7 +101,7 @@ class _HabitTileState extends State<HabitTile> {
       margin: EdgeInsets.symmetric(vertical: 5),
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: widget.isCompleted ? Color(0xffF1BEB5) : Color(0xffd5d5d5),
+        color: widget.isCompleted ? Color(0xffF1BEB5) : AppColors.mainGreyColor,
         borderRadius: BorderRadius.circular(3),
       ),
       child: InkWell(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:utracker/core/constrants/app_colors.dart';
+import 'package:utracker/core/constrants/app_images.dart';
 import 'package:utracker/features/habit_tracker/presentation/screens/login.dart';
 
 class OnboardingScreen extends ConsumerWidget {
@@ -27,12 +29,12 @@ class OnboardingScreen extends ConsumerWidget {
               SizedBox(height: 20),
               ClipRRect(
                 borderRadius: BorderRadiusGeometry.circular(50),
-                child: Image.asset('assets/images/logo.png'),
+                child: AppImages.appLogo,
               ),
               Spacer(),
               ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(Color(0xff0A5938)),
+                  backgroundColor: WidgetStatePropertyAll(AppColors.mainGreenColor),
                   minimumSize: WidgetStatePropertyAll(
                     Size(double.infinity, 40),
                   ),

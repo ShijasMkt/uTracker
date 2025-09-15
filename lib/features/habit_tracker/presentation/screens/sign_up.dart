@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:utracker/core/constrants/app_colors.dart';
 import 'package:utracker/features/habit_tracker/data/models/user_model.dart';
 import 'package:utracker/core/auth/auth_provider.dart';
 import 'package:utracker/features/habit_tracker/presentation/screens/home_screen.dart';
+import 'package:utracker/features/habit_tracker/presentation/widgets/custom_borderStyle.dart';
 
 class SignUp extends ConsumerStatefulWidget {
   const SignUp({super.key});
@@ -87,18 +89,12 @@ class _SignUpState extends ConsumerState<SignUp> {
                   decoration: InputDecoration(
                     hintText: "Enter a username",
                     filled: true,
-                    fillColor: Color(0xffd5d5d5),
+                    fillColor: AppColors.mainGreyColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(color: Color(0xffd5d5d5)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(color: Color(0xffd5d5d5)),
-                    ),
+                    enabledBorder: customBorderStyle(),
+                    focusedBorder: customBorderStyle(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -114,18 +110,12 @@ class _SignUpState extends ConsumerState<SignUp> {
                   decoration: InputDecoration(
                     hintText: "Enter a password",
                     filled: true,
-                    fillColor: Color(0xffd5d5d5),
+                    fillColor: AppColors.mainGreyColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(color: Color(0xffd5d5d5)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(color: Color(0xffd5d5d5)),
-                    ),
+                    enabledBorder: customBorderStyle(),
+                    focusedBorder: customBorderStyle(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -140,7 +130,7 @@ class _SignUpState extends ConsumerState<SignUp> {
                     minimumSize: WidgetStatePropertyAll(
                       Size(double.infinity, 40),
                     ),
-                    backgroundColor: WidgetStatePropertyAll(Color(0xff0A5938)),
+                    backgroundColor: WidgetStatePropertyAll(AppColors.mainGreenColor),
                   ),
                   onPressed: () {
                     if (_formkey.currentState!.validate()) {
