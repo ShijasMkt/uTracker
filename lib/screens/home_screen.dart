@@ -47,6 +47,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       appBar: _myAppBar(context),
       drawer: _myDrawer(user, context),
+      floatingActionButton: _myFloatingActionButton(context),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -142,13 +143,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             final statusKey = '${habit.key}-$formattedDate';
                             final status = habitStatusBox.get(statusKey);
                             final isCompleted = status?.isCompleted ?? false;
-                            int streak = calculateStreak(habit, statusBox);
+                            int streak = selectedDate == today
+                                ? calculateStreak(habit, statusBox)
+                                : 0;
                             return HabitTile(
                               date: selectedDate,
                               context: context,
                               isCompleted: isCompleted,
                               habit: habit,
                               streak: streak,
+                              isToday: selectedDate == today,
                             );
                           },
                         );
@@ -175,17 +179,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           },
         ),
       ),
-      actions: [
-        IconButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => AddHabit()),
-            );
-          },
-          icon: Icon(Icons.add),
-        ),
-      ],
     );
   }
 
@@ -233,6 +226,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  //floatingActionBtn
+  FloatingActionButton _myFloatingActionButton(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_)=>AddHabit())
+        );
+      },
+      child: Icon(Icons.add),
     );
   }
 }

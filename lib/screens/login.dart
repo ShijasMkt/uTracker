@@ -43,7 +43,7 @@ class _LoginState extends ConsumerState<Login> {
       settingsBox.put('isLoggedIn', true);
       settingsBox.put('currentUser', user.key);
       ref.read(authProvider.notifier).login();
-      Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => HomeScreen()),(route)=>false);
     }
   }
 

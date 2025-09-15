@@ -10,6 +10,7 @@ class HabitTile extends StatefulWidget {
   final bool isCompleted;
   final Habit habit;
   final int streak;
+  final bool isToday;
 
   const HabitTile({
     super.key,
@@ -18,6 +19,7 @@ class HabitTile extends StatefulWidget {
     required this.isCompleted,
     required this.habit,
     required this.streak,
+    required this.isToday
   });
 
   @override
@@ -98,7 +100,7 @@ class _HabitTileState extends State<HabitTile> {
       margin: EdgeInsets.symmetric(vertical: 5),
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: widget.isCompleted ? Colors.orangeAccent : Color(0xffd5d5d5),
+        color: widget.isCompleted ? Color(0xffF1BEB5) : Color(0xffd5d5d5),
         borderRadius: BorderRadius.circular(3),
       ),
       child: InkWell(
@@ -115,11 +117,12 @@ class _HabitTileState extends State<HabitTile> {
                 SizedBox(height: 5),
                 Row(
                   children: [
+                    if(widget.isToday)...[
                     Icon(Icons.local_fire_department, size: 18),
                     Text(
                       "${widget.streak.toString()} days",
                       style: TextStyle(fontSize: 14),
-                    ),
+                    ),]
                   ],
                 )
               ],
