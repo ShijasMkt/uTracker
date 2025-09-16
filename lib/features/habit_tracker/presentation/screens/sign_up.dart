@@ -5,7 +5,7 @@ import 'package:utracker/core/constrants/app_colors.dart';
 import 'package:utracker/features/habit_tracker/data/models/user_model.dart';
 import 'package:utracker/core/auth/auth_provider.dart';
 import 'package:utracker/features/habit_tracker/presentation/screens/home_screen.dart';
-import 'package:utracker/features/habit_tracker/presentation/widgets/custom_borderStyle.dart';
+import 'package:utracker/features/habit_tracker/presentation/widgets/custom_border_style.dart';
 
 class SignUp extends ConsumerStatefulWidget {
   const SignUp({super.key});

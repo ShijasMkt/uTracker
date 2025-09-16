@@ -3,6 +3,8 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:utracker/core/auth/auth_gate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:utracker/core/constrants/app_colors.dart';
+import 'package:utracker/core/constrants/app_fonts.dart';
+import 'package:utracker/core/constrants/app_texts.dart';
 import 'package:utracker/features/habit_tracker/data/models/habit_model.dart';
 import 'package:utracker/features/habit_tracker/data/models/habit_status_model.dart';
 import 'package:utracker/features/habit_tracker/data/models/user_model.dart';
@@ -32,14 +34,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'uTracker',
       theme: ThemeData(
-        fontFamily: 'Poppins',
+        fontFamily: AppFonts.poppins,
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.mainGreenColor),
-        textTheme: TextTheme(
-          bodyMedium: const TextStyle(fontSize: 16, color: Colors.black),
-          titleLarge: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          titleSmall: const TextStyle(fontSize: 14, color: Colors.grey),
-          labelLarge: TextStyle(fontSize: 14, color: AppColors.mainGreenColor),
-        ),
+        textTheme: myTextTheme,
       ),
       home: AuthGate(),
     );

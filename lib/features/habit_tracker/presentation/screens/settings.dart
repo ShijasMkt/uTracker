@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:utracker/features/habit_tracker/data/models/user_model.dart';
-import 'package:utracker/core/auth/auth_provider.dart';
-import 'package:utracker/features/habit_tracker/presentation/screens/onboarding_screen.dart';
+import 'package:utracker/features/habit_tracker/presentation/widgets/change_password_dialog.dart';
+import 'package:utracker/features/habit_tracker/presentation/widgets/delete_account_dialog.dart';
 
 class Settings extends ConsumerStatefulWidget {
   const Settings({super.key});
@@ -28,124 +28,9 @@ class _SettingsState extends ConsumerState<Settings> {
   Widget build(BuildContext context) {
     final GlobalKey<FormState> userNameFormkey = GlobalKey<FormState>();
     final TextEditingController uNameController = TextEditingController();
-
-    final GlobalKey<FormState> passwordFormKey = GlobalKey<FormState>();
-    final TextEditingController currentPassController = TextEditingController();
-    final TextEditingController newPassController = TextEditingController();
     final currentUser = settingsBox.get('currentUser');
     final user = userBox.get(currentUser);
 
-    void deleteAccount() {
-      user.delete();
-      settingsBox.put('isLoggedIn', false);
-      ref.read(authProvider.notifier).logout();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => OnboardingScreen()),
-      );
-    }
-
-    void showDeleteDialog() {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: Text("Do you really want to delete your account ?"),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(Icons.cancel_outlined),
-              ),
-              IconButton(
-                onPressed: () {
-                  deleteAccount();
-                },
-                icon: Icon(Icons.check),
-              ),
-            ],
-            actionsAlignment: MainAxisAlignment.spaceBetween,
-          );
-        },
-      );
-    }
-
-    void changePassword() {
-      String newPassword = newPassController.text.trim();
-      user.password = newPassword;
-      user.save();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.green,
-          content: Text("Password Updated"),
-        ),
-      );
-      Navigator.pop(context);
-    }
-
-    void showPasswordDialog() {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("Change Password"),
-            content: Form(
-              key: passwordFormKey,
-              child: Wrap(
-                children: [
-                  TextFormField(
-                    controller: currentPassController,
-                    obscureText: true,
-                    decoration: InputDecoration(labelText: "Current Password"),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please enter a value";
-                      }
-
-                      if (value != user.password) {
-                        return "Enter correct password";
-                      }
-
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 10),
-                  TextFormField(
-                    controller: newPassController,
-                    obscureText: true,
-                    decoration: InputDecoration(labelText: "New Password"),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please enter a password";
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(Icons.cancel_outlined),
-              ),
-              IconButton(
-                onPressed: () {
-                  if (passwordFormKey.currentState!.validate()) {
-                    changePassword();
-                  }
-                },
-                icon: Icon(Icons.check),
-              ),
-            ],
-            actionsAlignment: MainAxisAlignment.spaceBetween,
-          );
-        },
-      );
-    }
 
     void updateUserName() {
       final userBox = Hive.box<User>('Users');
@@ -227,19 +112,19 @@ class _SettingsState extends ConsumerState<Settings> {
               SizedBox(height: 20),
               !isEditing
                   ? Wrap(
-                    direction: Axis.vertical,
-                    crossAxisAlignment: WrapCrossAlignment.center,
+                      direction: Axis.vertical,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            showPasswordDialog();
+                            changePasswordDialog(context, user);
                           },
                           child: Text("change password"),
                         ),
-                        SizedBox(height: 10,),
+                        SizedBox(height: 10),
                         ElevatedButton(
                           onPressed: () {
-                            showDeleteDialog();
+                            deleteAccountDialog(context, user, settingsBox, ref);
                           },
                           child: Text(
                             "Delete Account",

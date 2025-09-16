@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:utracker/core/constrants/app_colors.dart';
 import 'package:utracker/features/habit_tracker/data/models/habit_status_model.dart';
 import 'package:utracker/features/habit_tracker/data/models/user_model.dart';
@@ -9,10 +8,12 @@ import 'package:utracker/features/habit_tracker/presentation/screens/add_habit.d
 import 'package:utracker/features/habit_tracker/presentation/screens/onboarding_screen.dart';
 import 'package:utracker/features/habit_tracker/presentation/screens/settings.dart';
 import 'package:utracker/features/habit_tracker/presentation/functions/streak_calculator.dart';
+import 'package:utracker/features/habit_tracker/presentation/widgets/date_display.dart';
 import 'package:utracker/features/habit_tracker/presentation/widgets/habit_tile.dart';
 import 'package:utracker/features/habit_tracker/data/models/habit_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:utracker/core/auth/auth_provider.dart';
+import 'package:utracker/features/habit_tracker/presentation/functions/is_today.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -28,6 +29,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late Box<HabitStatus> habitStatusBox;
   int selectedIndex = -1;
   DateTime? selectedDate;
+  DateTime today = DateTime.now();
 
   @override
   void initState() {
@@ -36,7 +38,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     userBox = Hive.box<User>('Users');
     habitBox = Hive.box<Habit>('Habits');
     habitStatusBox = Hive.box<HabitStatus>('HabitStatus');
-    DateTime today = DateTime.now();
+    today = DateTime(today.year, today.month, today.day);
     selectedDate = DateTime(today.year, today.month, today.day);
   }
 
@@ -44,8 +46,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final currentUser = settingsBox.get('currentUser');
     final user = userBox.get(currentUser);
-    DateTime today = DateTime.now();
-    today = DateTime(today.year, today.month, today.day);
+
     return Scaffold(
       appBar: _myAppBar(context),
       drawer: _myDrawer(user, context),
@@ -61,60 +62,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 children: [
                   Text("Habits", style: TextTheme.of(context).titleLarge),
                   SizedBox(width: 20),
-                  Expanded(
-                    child: SizedBox(
-                      height: 50,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        reverse: true,
-                        itemCount: 7,
-                        itemBuilder: (context, index) {
-                          DateTime day = today.subtract(Duration(days: index));
-                          day = DateTime(day.year, day.month, day.day);
-                          String dayName = DateFormat('EEEE').format(day);
-                          return Container(
-                            padding: EdgeInsets.all(5),
-                            margin: EdgeInsets.symmetric(horizontal: 5),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: day == selectedDate
-                                  ? AppColors.mainGreenColor
-                                  : AppColors.mainGreyColor,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  selectedDate = day;
-                                });
-                              },
-                              child: Column(
-                                children: [
-                                  Text(
-                                    day == today ? 'Today' : dayName,
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: day == selectedDate
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    "${day.day}",
-                                    style: TextStyle(
-                                      color: day == selectedDate
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                  DateDisplay(
+                    today: today,
+                    selectedDate: selectedDate,
+                    onDateSelected: (newDate) {
+                      setState(() {
+                        selectedDate = newDate;
+                      });
+                    },
                   ),
                 ],
               ),
@@ -145,7 +100,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             final statusKey = '${habit.key}-$formattedDate';
                             final status = habitStatusBox.get(statusKey);
                             final isCompleted = status?.isCompleted ?? false;
-                            int streak = selectedDate == today
+                            int streak = isToday(selectedDate)
                                 ? calculateStreak(habit, statusBox)
                                 : 0;
                             return HabitTile(
@@ -154,7 +109,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               isCompleted: isCompleted,
                               habit: habit,
                               streak: streak,
-                              isToday: selectedDate == today,
+                              isToday: isToday(selectedDate),
                             );
                           },
                         );
