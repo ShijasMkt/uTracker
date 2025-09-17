@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:utracker/core/auth/auth_gate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,12 +23,23 @@ void main() async {
   await Hive.openBox<User>('Users');
   await Hive.openBox<Habit>('Habits');
   await Hive.openBox<HabitStatus>('HabitStatus');
-  runApp(const ProviderScope(child: MyApp()));
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.portraitUp,
+  ]).then((_){
+    runApp(const ProviderScope(child: MyApp()));
+  });
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool isDarkMode=false;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
